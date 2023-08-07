@@ -1,16 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
-import { useFormContext } from "../context/formContext";
+import { useFormContext } from "emp_employee/context";
 import {
     ageAction, departmentAction, genderAction, qualificationAction 
-} from "../actions/formAction";
+} from "emp_employee/actions";
 import { GENDER_LIST } from "../constants/genderConstant";
-import { DEPARTMENT_LIST } from "../constants/departmentConstant";
-import { QUALIFICATION_LIST } from "../constants/qualificationConstant";
+import { useDepartments } from "../hooks/useDepartments";
+import { useQualifications } from "../hooks/useQualifications";
 
 export const Demographics =  ({ formDispatch }) => {
 
-    const { age, gender, department, qualification } = useFormContext();
+    const [genderValue, setGenderValue] = useState(1);
+    const { age, department, qualification } = useFormContext();
+
+    const { data: departmentList } = useDepartments();
+    const { data: qualificationList } = useQualifications();
 
     const changeValue = (e) => {
 
@@ -23,17 +27,18 @@ export const Demographics =  ({ formDispatch }) => {
             }
                 break;
             case "genderId":{
-                const payload = GENDER_LIST.find((x) => x.id === Number(value));
-                action = genderAction(payload);
+                setGenderValue(value);
+                const genderObj = GENDER_LIST.find((x) => x.id === Number(value));
+                action = genderAction(genderObj.value);
             }
                 break;
             case "departmentId": {
-                const payload = DEPARTMENT_LIST.find(x => x.id === Number(value));
+                const payload = departmentList?.find(x => x.id === Number(value));
                 action = departmentAction(payload);
             }
                 break;
             case "qualificationId": {
-                const payload = QUALIFICATION_LIST.find(x => x.id === Number(value));
+                const payload = qualificationList?.find(x => x.id === Number(value));
                 action = qualificationAction(payload);
             }
                 break;
@@ -68,7 +73,7 @@ export const Demographics =  ({ formDispatch }) => {
                         id="genderId"
                         data-testid="selectId"
                         className="form-control"
-                        value={ gender.id }
+                        value={ genderValue }
                         onChange={ changeValue }
                         required>
                         <option disabled value="">Select gender</option>
@@ -92,12 +97,12 @@ export const Demographics =  ({ formDispatch }) => {
                         id="departmentId"
                         data-testid="selectId"
                         className="form-control"
-                        value={ department.id } 
+                        value={ department?.id } 
                         onChange={ changeValue }
                         required>
                         <option disabled value="">Choose Department</option>
                         {
-                            DEPARTMENT_LIST.map((x)=><option 
+                            departmentList?.map((x)=><option 
                                 key={ x.id } 
                                 value={ x.id }>
                                 {x.value}
@@ -115,12 +120,12 @@ export const Demographics =  ({ formDispatch }) => {
                         id="qualificationId"
                         data-testid="selectId"
                         className="form-control" 
-                        value={ qualification.id }
+                        value={ qualification?.id }
                         onChange={ changeValue }
                         required>
                         <option disabled value="">Choose Qualification</option>
                         {
-                            QUALIFICATION_LIST.map((x)=><option 
+                            qualificationList?.map((x)=><option 
                                 key={ x.id } 
                                 value={ x.id }>
                                 {x.value}

@@ -1,8 +1,7 @@
 import React from "react"
 import PropTypes from "prop-types";
-
-import { useFormContext } from "../context/formContext";
-import { firstNameAction, lastNameAction } from "../actions/formAction";
+import { useFormContext } from "emp_employee/context";
+import { firstNameAction, lastNameAction } from "emp_employee/actions";
 
 export const Name = ({ formDispatch }) => {
 

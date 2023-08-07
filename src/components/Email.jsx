@@ -2,8 +2,8 @@ import React from "react";
 import PropTypes from "prop-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope } from "@fortawesome/free-regular-svg-icons";
-import { emailIdAction } from "../actions/formAction";
-import { useFormContext } from "../context/formContext";
+import { emailIdAction } from "emp_employee/actions";
+import { useFormContext } from "emp_employee/context";
 
 export const Email = ({ formDispatch }) => {
 

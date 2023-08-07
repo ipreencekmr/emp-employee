@@ -1,7 +1,7 @@
 import React from "react"
 import PropTypes from "prop-types";
-import { useFormContext } from "../context/formContext";
-import { agreeAction } from "../actions/formAction";
+import { useFormContext } from "emp_employee/context";
+import { agreeAction } from "emp_employee/actions";
 
 export const OnBoard = ({ formDispatch }) => {
 
