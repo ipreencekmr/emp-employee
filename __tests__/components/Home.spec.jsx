@@ -5,6 +5,74 @@ import {
 import "@testing-library/jest-dom"
 import { Home } from "../../src/components/Home";
 
+jest.mock("emp_employee/context", () => ({
+    useFormContext: jest.fn().mockReturnValue({
+        firstName: "mockFirstName",
+        lastName: "mockLastName",
+        emailId: "mockEmailAddress",
+        age: "mockAge",
+        gender: "mockGender",
+        department: {
+            id: "",
+            value: "mockDepartment"
+        },
+        qualification: {
+            id: "",
+            value: "mockQualification"
+        },
+        address: {
+            addressLine1: "mockLine1",
+            addressLine2: "mockLine2",
+            aptSuite: "mockSuite",
+            society: "mockSociety",
+            city: "mockCity",
+            state: "mockState",
+            country: "mockCountry",
+            zipCode: "mockZip" 
+        }
+    }),
+    FormContext: jest.fn().mockReturnValueOnce({
+        Provider: jest.fn()
+    }),
+}), {
+    virtual: true 
+});
+
+jest.mock("emp_employee/actions", () => ({
+    ageAction: jest.fn(),
+    agreeAction: jest.fn(),
+    departmentAction: jest.fn(), 
+    emailIdAction: jest.fn(),
+    firstNameAction: jest.fn(),
+    genderAction: jest.fn(), 
+    lastNameAction: jest.fn(),
+    qualificationAction: jest.fn(),
+    addressLine1Action: jest.fn(),
+    addressLine2Action: jest.fn(),
+    aptSuiteAction: jest.fn(),
+    societyAction: jest.fn(),
+    cityAction: jest.fn(),
+    stateAction: jest.fn(),
+    countryAction: jest.fn(),
+    zipCodeAction: jest.fn(),
+    allAction: jest.fn()
+}), {
+    virtual: true 
+});
+
+
+jest.mock("emp_employee/reducer", () => ({
+    formReducer: jest.fn(),
+}), {
+    virtual: true 
+});
+
+jest.mock("emp_address/Address", () => ({
+    Address: jest.fn(()=>"<div></div>")
+}), {
+    virtual: true 
+});
+
 describe("Employee App", () => {
 
     it("renders App component", () => {

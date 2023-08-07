@@ -1,8 +1,15 @@
 import { formReducer } from "../../src/reducer/formReducer";
 import { defaultValue } from "../../src/context/formContext";
 import {
-    ageAction, agreeAction, departmentAction, emailIdAction, 
-    firstNameAction, genderAction, lastNameAction, qualificationAction 
+    addressLine1Action,
+    addressLine2Action,
+    ageAction, agreeAction, 
+    allAction, aptSuiteAction, 
+    cityAction, countryAction, 
+    departmentAction, emailIdAction, 
+    firstNameAction, genderAction, 
+    lastNameAction, qualificationAction, 
+    societyAction, stateAction, zipCodeAction 
 } from "../../src/actions/formAction";
 
 describe("formReducer", () => {
@@ -52,6 +59,67 @@ describe("formReducer", () => {
         const action = agreeAction();
         const state = formReducer(defaultValue, action);
         expect(state.agree).toEqual(true);
+    });
+
+    it("should work for address line 1 action", ()=>{
+        const action = addressLine1Action("mockValue");
+        const state = formReducer(defaultValue, action);
+        expect(state.address.addressLine1).toEqual("mockValue");
+    });
+
+    it("should work for address line 2 action", ()=>{
+        const action = addressLine2Action("mockValue");
+        const state = formReducer(defaultValue, action);
+        expect(state.address.addressLine2).toEqual("mockValue");
+    });
+
+    it("should work for apt suite action", ()=>{
+        const action = aptSuiteAction("mockValue");
+        const state = formReducer(defaultValue, action);
+        expect(state.address.aptSuite).toEqual("mockValue");
+    });
+
+    it("should work for society action", ()=>{
+        const action = societyAction("mockValue");
+        const state = formReducer(defaultValue, action);
+        expect(state.address.society).toEqual("mockValue");
+    });
+
+    it("should work for city action", ()=>{
+        const action = cityAction("mockValue");
+        const state = formReducer(defaultValue, action);
+        expect(state.address.city).toEqual("mockValue");
+    });
+
+    it("should work for state action", ()=>{
+        const action = stateAction("mockValue");
+        const state = formReducer(defaultValue, action);
+        expect(state.address.state).toEqual("mockValue");
+    });
+
+    it("should work for country action", ()=>{
+        const action = countryAction("mockValue");
+        const state = formReducer(defaultValue, action);
+        expect(state.address.country).toEqual("mockValue");
+    });
+
+    it("should work for zipCode action", ()=>{
+        const action = zipCodeAction("mockValue");
+        const state = formReducer(defaultValue, action);
+        expect(state.address.zipCode).toEqual("mockValue");
+    });
+
+    it("should work for all action", ()=>{
+        const mockState = {
+            "key": "mockKey",
+            "value": "mockValue"
+        };
+        const action = allAction(mockState);
+        const state = formReducer(defaultValue, action);
+        expect(state).toEqual(expect.objectContaining({
+            "key": "mockKey",
+            "value": "mockValue"
+        }));
     });
 
     it("should throw an error for invalid action", ()=>{
