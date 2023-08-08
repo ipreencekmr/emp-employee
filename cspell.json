@@ -7,6 +7,7 @@
     "allowMultilines",
     "lcov",
     "cobertura",
-    "testid"
+    "testid",
+    "ipreencekmr"
     ]
 }
