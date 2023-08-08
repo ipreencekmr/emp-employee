@@ -167,7 +167,7 @@ describe("useEmployee", () => {
             expect(data).toEqual(null);
         });
 
-        it("should return expected value on success status with empId", () => {
+        it("should return expected value on success status without empId", () => {
 
             const mockEmpInfo = {
                 firstName: "mockFirstName",
@@ -184,6 +184,37 @@ describe("useEmployee", () => {
                     post: jest.fn(() => Promise.resolve({
                         status: 200,
                         data: mockEmpInfo
+                    }))
+                }
+            });
+
+            const { data, updateEmployee } = useEmployee();
+
+            const empId = null;
+            const body =  {
+                ...mockEmpInfo
+            };
+            updateEmployee(false, empId, body);
+            expect(data).toEqual(expect.objectContaining(mockEmpInfo));
+        });
+
+        it("should return expected value on success status with no data without empId", () => {
+
+            const mockEmpInfo = {
+                firstName: "mockFirstName",
+                lastName: "mockLastName",
+                emailId: "mockEmailId"
+            };
+
+            useStateSpy.mockImplementationOnce(jest.fn(()=>[mockEmpInfo, setData]));
+            useStateSpy.mockImplementationOnce(jest.fn(()=>[null, setError]));
+            useStateSpy.mockImplementationOnce(jest.fn(()=>[null, setIsLoading]));
+
+            axios.create = jest.fn(function () {
+                return {
+                    post: jest.fn(() => Promise.resolve({
+                        status: 200,
+                        data: null
                     }))
                 }
             });

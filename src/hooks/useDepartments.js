@@ -29,10 +29,11 @@ export const useDepartments = () => {
         }).finally(()=>{
             setIsLoading(false);
         });
-    }, []);
+    }, [axios]);
 
     useEffect(() => {
         fetchDepartments();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return {

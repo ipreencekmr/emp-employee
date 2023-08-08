@@ -28,10 +28,11 @@ export const useQualifications = () => {
         }).finally(()=>{
             setIsLoading(false);
         });
-    }, []);
+    }, [axios]);
 
     useEffect(() => {
         fetchQualifications();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return {

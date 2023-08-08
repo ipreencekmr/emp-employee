@@ -28,7 +28,7 @@ export const useEmployeeInfo = () => {
         }).finally(()=>{
             setIsLoading(false);
         });
-    }, []);
+    }, [axios]);
 
     return {
         isLoading, 

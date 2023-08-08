@@ -28,9 +28,12 @@ export const useEmployee = () => {
         }
 
         axiosInstance.then((response) => {
-            if(response.status === 200) {
+            if(response.status === 200 || 
+                response.status === 201) {
                 setError(null);
-                setData(response.data);
+                setData(response.data || {
+                    msg: "Created"
+                });
             }else {
                 setError(new Error("Something went wrong!"));
                 setData(null);
@@ -41,7 +44,7 @@ export const useEmployee = () => {
         }).finally(()=>{
             setIsLoading(false);
         });
-    }, []);
+    }, [axios]);
 
     return {
         isLoading, 

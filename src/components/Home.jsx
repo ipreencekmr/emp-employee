@@ -38,7 +38,7 @@ export const Home = () => {
 
     useEffect(() => {
         if(id) fetchEmployeeInfo(id);
-    }, [id]);
+    }, [fetchEmployeeInfo, id]);
 
     const {
         isLoading, 

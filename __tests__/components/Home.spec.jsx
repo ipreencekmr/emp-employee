@@ -1,11 +1,15 @@
 import React from "react";
+import * as Router from "react-router-dom";
 import {
     fireEvent, render, screen 
 } from "@testing-library/react";
 import "@testing-library/jest-dom"
 import { Home } from "../../src/components/Home";
+import { useEmployeeInfo } from "../../src/hooks/useEmployeeInfo";
+import { useEmployee } from "../../src/hooks/useEmployee";
 
 jest.mock("emp_employee/context", () => ({
+    ...jest.requireActual("../../src/context/formContext"),
     useFormContext: jest.fn().mockReturnValue({
         firstName: "mockFirstName",
         lastName: "mockLastName",
@@ -30,9 +34,6 @@ jest.mock("emp_employee/context", () => ({
             country: "mockCountry",
             zipCode: "mockZip" 
         }
-    }),
-    FormContext: jest.fn().mockReturnValueOnce({
-        Provider: jest.fn()
     }),
 }), {
     virtual: true 
@@ -60,98 +61,303 @@ jest.mock("emp_employee/actions", () => ({
     virtual: true 
 });
 
-
 jest.mock("emp_employee/reducer", () => ({
     formReducer: jest.fn(),
 }), {
     virtual: true 
 });
 
-jest.mock("emp_address/Address", () => ({
-    Address: jest.fn(()=>"<div></div>")
-}), {
-    virtual: true 
+jest.mock("emp_address/Address", () => {
+    return {
+        __esModule: true,
+        default: jest.fn(() => <div data-testid="addressFormId"></div>),
+    }
+}, {
+    virtual: true
 });
+
+jest.mock("react-router-dom", () => ({
+    ...jest.requireActual("react-router-dom"),
+    useParams: jest.fn(),
+}));
+
+jest.mock("../../src/hooks/useEmployeeInfo", () => ({
+    ...jest.requireActual("../../src/hooks/useEmployeeInfo"),
+    useEmployeeInfo: jest.fn(()=>({
+        isLoading: false, 
+        data: null, 
+        error: null,
+        fetchEmployeeInfo: jest.fn()
+    })),
+}));
+
+jest.mock("../../src/hooks/useEmployee", () => ({
+    ...jest.requireActual("../../src/hooks/useEmployee"),
+    useEmployee: jest.fn(()=>({
+        isLoading: false, 
+        data: null, 
+        error: null,
+        updateEmployee: jest.fn()
+    })),
+}));
 
 describe("Employee App", () => {
 
-    it("renders App component", () => {
+    let useEffectSpy;
+    let routerSpy;
+
+    beforeEach(() => {
+        useEffectSpy = jest.spyOn(React, "useEffect");
+        routerSpy = jest.spyOn(Router, "useParams");
+
+        useEffectSpy.mockImplementationOnce((f)=>f());
+        useEffectSpy.mockImplementationOnce((f)=>f());
+    });
+
+    it("renders App component for update with employee Info", () => {
+        routerSpy.mockReturnValue({
+            id: "1234" 
+        });
+
+        const fetchEmployeeInfo = jest.fn();
+        const empData = {
+            firstName: "mockFirstName",
+            lastName: "mockLastName"
+        };
+
+        useEmployeeInfo.mockReturnValue({
+            isLoading: false, 
+            data: empData, 
+            error: null,
+            fetchEmployeeInfo
+        });
+
+        render(<Home />);
+        expect(fetchEmployeeInfo).toHaveBeenCalled();
+    });
+    
+    it("renders App component for update without employee Info", () => {
+        routerSpy.mockReturnValue({
+            id: "1234" 
+        });
+
+        const fetchEmployeeInfo = jest.fn();
+        useEmployeeInfo.mockReturnValue({
+            isLoading: false, 
+            data: null, 
+            error: new Error("Something went wrong!"),
+            fetchEmployeeInfo
+        });
+
+        render(<Home />);
+        expect(fetchEmployeeInfo).toHaveBeenCalled();
+    });
+    
+    it("renders App component for create", () => {
+        routerSpy.mockReturnValue({
+            id: null
+        });
+
+        const fetchEmployeeInfo = jest.fn();
+        const empData = {
+            firstName: "mockFirstName",
+            lastName: "mockLastName"
+        };
+        useEmployeeInfo.mockReturnValue({
+            isLoading: false, 
+            data: empData, 
+            error: null,
+            fetchEmployeeInfo
+        });
+
         render(<Home />);
         expect(screen.getByTestId("formId")).toBeInTheDocument();
+        expect(fetchEmployeeInfo).not.toHaveBeenCalled();
     });
 
-    it("should check unfilled form validation", () => {
-        render(<Home />);
-        const submitBtn = screen.getByRole("button");
-        expect(submitBtn.textContent).toEqual("Add");
-        fireEvent.click(submitBtn, {
-            target: submitBtn
+    it("should not call updateEmployee on submit if form not validated", () => {
+        routerSpy.mockReturnValue({
+            id: "1234" 
         });
 
+        const fetchEmployeeInfo = jest.fn();
+        const updateEmployee = jest.fn();
+        const empData = {
+            firstName: "mockFirstName",
+            lastName: "mockLastName"
+        };
+
+        useEmployeeInfo.mockReturnValue({
+            isLoading: false, 
+            data: empData, 
+            error: null,
+            fetchEmployeeInfo
+        });
+
+        useEmployee.mockReturnValue({
+            isLoading: false, 
+            data: empData, 
+            error: null,
+            updateEmployee
+        });
+
+        render(<Home />);
         const form = screen.getByTestId("formId");
+        fireEvent.click(screen.getByRole("button", {
+            name: /update/i
+        }));
         expect(form.checkValidity()).toEqual(false);
+        expect(updateEmployee).not.toHaveBeenCalled();
     });
 
-    it("should check filled form validation on submit", () => {
+    it("should call updateEmployee for Update on submit if form validated", () => {
+        routerSpy.mockReturnValue({
+            id: "1234" 
+        });
+
+        const fetchEmployeeInfo = jest.fn();
+        const updateEmployee = jest.fn();
+        const empData = {
+            firstName: "mockFirstName",
+            lastName: "mockLastName"
+        };
+
+        useEmployeeInfo.mockReturnValue({
+            isLoading: false, 
+            data: empData, 
+            error: null,
+            fetchEmployeeInfo
+        });
+
+        useEmployee.mockReturnValue({
+            isLoading: false, 
+            data: empData, 
+            error: null,
+            updateEmployee
+        });
+
         render(<Home />);
-        const submitBtn = screen.getByRole("button");
-        expect(submitBtn.textContent).toEqual("Add");
-
-        const inputs = screen.getAllByRole("textbox");
-        const selects = screen.getAllByTestId("selectId");
-        const spinbutton = screen.getByRole("spinbutton");
-        const checkbox = screen.getByRole("checkbox");
-        
-        // Validate element existence in the document
-        expect(inputs).toHaveLength(3);
-        expect(spinbutton).toBeInTheDocument();
-        expect(checkbox).toBeInTheDocument();
-        expect(selects).toHaveLength(3);
-
-        // Expect Input Values
-        inputs.forEach(element => {
-            fireEvent.change(element, {
-                target: {
-                    value: "mockValue"
-                }
-            });
-            expect(element.value).toEqual("mockValue");
-            expect(element.id).toMatch(/(firstNameId|lastNameId|emailId)/gi);
-            element.checkValidity = jest.fn().mockReturnValue(true);
-            expect(element.checkValidity()).toEqual(true);
-        });
-
-        // Expect Dropdown values
-        selects.forEach(element => {
-            fireEvent.change(element, {
-                target: {
-                    value: "1"
-                } 
-            });
-            expect(element.checkValidity()).toBe(true);
-            expect(element.value).toEqual("1");
-        });
-
-        fireEvent.click(checkbox);
-        expect(checkbox.checkValidity()).toBe(true);
-        expect(checkbox.checked).toEqual(true);
-
-        // Expect Age Value
-        fireEvent.change(spinbutton, {
-            target: {
-                value: 30
-            }
-        });
-        expect(spinbutton.checkValidity()).toBe(true);
-        expect(spinbutton.value).toEqual("30");
-
-        //check form validated
         const form = screen.getByTestId("formId");
         form.checkValidity = jest.fn().mockReturnValue(true);
-        fireEvent.click(submitBtn, {
-            target: submitBtn
-        });
-        
+
+        fireEvent.click(screen.getByRole("button", {
+            name: /update/i
+        }));
+
         expect(form.checkValidity()).toEqual(true);
+        expect(updateEmployee).toHaveBeenCalled();
+    });
+
+    it("should call updateEmployee for Add Employee on submit if form validated ", () => {
+        routerSpy.mockReturnValue({
+            id: null
+        });
+
+        const fetchEmployeeInfo = jest.fn();
+        const updateEmployee = jest.fn();
+        const empData = {
+            firstName: "mockFirstName",
+            lastName: "mockLastName"
+        };
+
+        useEmployeeInfo.mockReturnValue({
+            isLoading: false, 
+            data: empData, 
+            error: null,
+            fetchEmployeeInfo
+        });
+
+        useEmployee.mockReturnValue({
+            isLoading: false, 
+            data: empData, 
+            error: null,
+            updateEmployee
+        });
+
+        render(<Home />);
+        const form = screen.getByTestId("formId");
+        form.checkValidity = jest.fn().mockReturnValue(true);
+
+        fireEvent.click(screen.getByRole("button", {
+            name: /add/i
+        }));
+
+        expect(form.checkValidity()).toEqual(true);
+        expect(updateEmployee).toHaveBeenCalled();
+    });
+
+    it("should display spinner on submit button if api loading and form validated ", () => {
+        routerSpy.mockReturnValue({
+            id: null
+        });
+
+        const fetchEmployeeInfo = jest.fn();
+        const updateEmployee = jest.fn();
+     
+        useEmployeeInfo.mockReturnValue({
+            isLoading: false, 
+            data: null, 
+            error: null,
+            fetchEmployeeInfo
+        });
+
+        useEmployee.mockReturnValue({
+            isLoading: true, 
+            data: null, 
+            error: null,
+            updateEmployee
+        });
+
+        render(<Home />);
+        const form = screen.getByTestId("formId");
+        form.checkValidity = jest.fn().mockReturnValue(true);
+
+        fireEvent.click(screen.getByRole("button", {
+            name: /add/i
+        }));
+
+        expect(form.checkValidity()).toEqual(true);
+        expect(screen.getByRole("button", {
+            name: /add/i
+        })).toHaveAttribute("disabled", "");
+    });
+
+    it("should display error banner on submit error for validated form ", () => {
+        routerSpy.mockReturnValue({
+            id: null
+        });
+
+        const fetchEmployeeInfo = jest.fn();
+        const updateEmployee = jest.fn();
+        const empData = {
+            firstName: "mockFirstName",
+            lastName: "mockLastName"
+        };
+
+        useEmployeeInfo.mockReturnValue({
+            isLoading: false, 
+            data: empData, 
+            error: null,
+            fetchEmployeeInfo
+        });
+
+        useEmployee.mockReturnValue({
+            isLoading: false, 
+            data: null, 
+            error: new Error("Something went wrong!"),
+            updateEmployee
+        });
+
+        render(<Home />);
+        const form = screen.getByTestId("formId");
+        form.checkValidity = jest.fn().mockReturnValue(true);
+
+        fireEvent.click(screen.getByRole("button", {
+            name: /add/i
+        }));
+
+        expect(form.checkValidity()).toEqual(true);
+        expect(updateEmployee).toHaveBeenCalled();
+        expect(screen.getByRole("alert").getAttribute("class")).toContain("alert");
     });
 });

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import PropTypes from "prop-types";
 import { useFormContext } from "emp_employee/context";
 import {
@@ -16,7 +16,7 @@ export const Demographics =  ({ formDispatch }) => {
     const { data: departmentList } = useDepartments();
     const { data: qualificationList } = useQualifications();
 
-    const changeValue = (e) => {
+    const changeValue = useCallback((e) => {
 
         const value = e.target.value;
         let action;
@@ -45,7 +45,7 @@ export const Demographics =  ({ formDispatch }) => {
         }
 
         formDispatch(action);
-    }
+    }, [departmentList, formDispatch, qualificationList]);
 
     return (
         <fieldset className="mt-4">
@@ -58,6 +58,7 @@ export const Demographics =  ({ formDispatch }) => {
                         maxLength={ 3 } 
                         className="form-control"
                         id="ageId"
+                        data-testid="ageId"
                         value={ age } 
                         onChange={ changeValue }
                         required/>
