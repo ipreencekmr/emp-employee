@@ -9,7 +9,8 @@
     "start": "webpack serve --open --mode development",
     "start:live": "webpack serve --open --mode development --live-reload --hot",
     "start:docker":"docker run -p 3006:3006 ipreencekmr/emp-employee",
-    "test": "jest --no-cache --watchAll"
+    "test": "jest --no-cache --watchAll",
+    "publish":"docker push ipreencekmr/emp-employee"
   },
   "license": "MIT",
   "author": {
