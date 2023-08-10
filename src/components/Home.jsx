@@ -17,6 +17,8 @@ import { SuccessBanner } from "./SuccessBanner";
 import { allAction } from "../actions/formAction";
 
 export const Home = () => {
+     
+    let backLink = useRef(null);
 
     let { id } = useParams();
 
@@ -29,6 +31,13 @@ export const Home = () => {
         fetchEmployeeInfo
     } = useEmployeeInfo();
 
+    const {
+        isLoading, 
+        data, 
+        error,
+        updateEmployee,
+    } =  useEmployee();
+
     useEffect(()=>{
         if(!empLoading && !empError && empData) {
             const updateAction = allAction(empData);
@@ -38,14 +47,14 @@ export const Home = () => {
 
     useEffect(() => {
         if(id) fetchEmployeeInfo(id);
-    }, [fetchEmployeeInfo, id]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [id]);
 
-    const {
-        isLoading, 
-        data, 
-        error,
-        updateEmployee,
-    } =  useEmployee();
+    useEffect(()=>{
+        if(!error && data){
+            backLink?.current.click();
+        }
+    }, [data, error]);
 
     const [formValidationClass, setFormValidationClass] = useState("needs-validation");
     const formRef = useRef(null);
@@ -67,12 +76,16 @@ export const Home = () => {
         const empId = id;
         const body = JSON.stringify(formState);
 
-        console.log(`Submit Form => ${JSON.stringify(formState)}`);
+        console.info(`Submit Form => ${JSON.stringify(formState)}`);
         updateEmployee(isUpdate, empId, body);
     };
 
     return (
         <FormContext.Provider value={ formState }>
+            <a ref={ backLink } 
+                className="d-none" 
+                aria-hidden={ true } 
+                href="/">Go Back</a>
             {error && <ErrorBanner></ErrorBanner>}
             {data && <SuccessBanner></SuccessBanner>}
             <form data-testid="formId" 
@@ -87,7 +100,7 @@ export const Home = () => {
                 
                 <Address formDispatch={ formDispatch }/>
 
-                <OnBoard formDispatch={ formDispatch }></OnBoard>
+                <OnBoard isUpdate={ id ? true: false } formDispatch={ formDispatch }></OnBoard>
 
                 <button
                     type="submit" 
