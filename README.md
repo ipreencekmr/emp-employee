@@ -22,3 +22,7 @@
 ## Available Unit Test Coverage 
 
 <img width="635" alt="Unit Test" src="https://github.com/ipreencekmr/emp-employee/assets/3636918/8782fd56-bb4c-4447-9b39-ecb83a347fe2">
+
+## User Interface 
+
+![employee](https://github.com/ipreencekmr/emp-employee/assets/3636918/002969cb-935b-4ad1-a75a-e398c15c13d3)
