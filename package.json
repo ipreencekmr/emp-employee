@@ -11,7 +11,7 @@
     "start:docker":"docker run -p 3006:3006 ipreencekmr/emp-employee",
     "publish":"docker push ipreencekmr/emp-employee",
     "test": "jest --no-cache",
-    "test:watch": "jest --no-cache --watchAll",
+    "test:watch": "jest --no-cache --watchAll --detectOpenHandles",
     "lint": "eslint \"src/**/*.{js,jsx}\"",
     "lint:fix": "eslint \"src/**/*.{js,jsx}\" --fix"
   },

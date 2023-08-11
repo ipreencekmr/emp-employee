@@ -62,12 +62,12 @@ jest.mock("../../src/hooks/useDepartments", () => ({
 }));
 
 describe("Demographics", () => {
-    it("should render as expected", () => {
+    it("should render as expected", async () => {
         const formDispatch = jest.fn();
         render(<Demographics formDispatch={ formDispatch }></Demographics>);
     });
 
-    it("should call dispatch on age input change", () => {
+    it("should call dispatch on age input change", async () => {
 
         const formDispatch = jest.fn();
         render(<Demographics formDispatch={ formDispatch }></Demographics>);
@@ -81,7 +81,7 @@ describe("Demographics", () => {
         expect(formDispatch).toHaveBeenCalled();
     });
 
-    it("should call dispatch on select input change", () => {
+    it("should call dispatch on select input change", async () => {
 
         const formDispatch = jest.fn();
         render(<Demographics formDispatch={ formDispatch }></Demographics>);

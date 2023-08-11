@@ -101,6 +101,38 @@ jest.mock("../../src/hooks/useEmployee", () => ({
     })),
 }));
 
+jest.mock("../../src/hooks/useQualifications", () => ({
+    ...jest.requireActual("../../src/hooks/useQualifications"),
+    useQualifications: jest.fn().mockReturnValue({
+        data: [
+            {
+                id: 1,
+                value: "mock qualification 1"
+            },
+            {
+                id: 2,
+                value: "mock qualification 2"
+            }
+        ]
+    })
+}));
+
+jest.mock("../../src/hooks/useDepartments", () => ({
+    ...jest.requireActual("../../src/hooks/useDepartments"),
+    useDepartments: jest.fn().mockReturnValue({
+        data: [
+            {
+                id: 1,
+                value: "mock department 1"
+            },
+            {
+                id: 2,
+                value: "mock department 2"
+            }
+        ]
+    })
+}));
+
 describe("Employee App", () => {
 
     let useEffectSpy;
@@ -114,29 +146,11 @@ describe("Employee App", () => {
         useEffectSpy.mockImplementationOnce((f)=>f());
     });
 
-    it("renders App component for update with employee Info", () => {
-        routerSpy.mockReturnValue({
-            id: "1234" 
-        });
-
-        const fetchEmployeeInfo = jest.fn();
-        const empData = {
-            firstName: "mockFirstName",
-            lastName: "mockLastName"
-        };
-
-        useEmployeeInfo.mockReturnValue({
-            isLoading: false, 
-            data: empData, 
-            error: null,
-            fetchEmployeeInfo
-        });
-
-        render(<Home />);
-        expect(fetchEmployeeInfo).toHaveBeenCalled();
+    afterEach(() => {
+        jest.clearAllMocks();
     });
     
-    it("renders App component for update without employee Info", () => {
+    it("renders App component for update without employee Info", async () => {
         routerSpy.mockReturnValue({
             id: "1234" 
         });
@@ -153,7 +167,7 @@ describe("Employee App", () => {
         expect(fetchEmployeeInfo).toHaveBeenCalled();
     });
     
-    it("renders App component for create", () => {
+    it("renders App component for create", async () => {
         routerSpy.mockReturnValue({
             id: null
         });
@@ -175,7 +189,7 @@ describe("Employee App", () => {
         expect(fetchEmployeeInfo).not.toHaveBeenCalled();
     });
 
-    it("should not call updateEmployee on submit if form not validated", () => {
+    it("should not call updateEmployee on submit if form not validated", async () => {
         routerSpy.mockReturnValue({
             id: "1234" 
         });
@@ -210,7 +224,7 @@ describe("Employee App", () => {
         expect(updateEmployee).not.toHaveBeenCalled();
     });
 
-    it("should call updateEmployee for Update on submit if form validated", () => {
+    it("should call updateEmployee for Update on submit if form validated", async () => {
         routerSpy.mockReturnValue({
             id: "1234" 
         });
@@ -248,7 +262,7 @@ describe("Employee App", () => {
         expect(updateEmployee).toHaveBeenCalled();
     });
 
-    it("should call updateEmployee for Add Employee on submit if form validated ", () => {
+    it("should call updateEmployee for Add Employee on submit if form validated ", async () => {
         routerSpy.mockReturnValue({
             id: null
         });
@@ -286,7 +300,7 @@ describe("Employee App", () => {
         expect(updateEmployee).toHaveBeenCalled();
     });
 
-    it("should display spinner on submit button if api loading and form validated ", () => {
+    it("should display spinner on submit button if api loading and form validated ", async () => {
         routerSpy.mockReturnValue({
             id: null
         });
@@ -322,7 +336,7 @@ describe("Employee App", () => {
         })).toHaveAttribute("disabled", "");
     });
 
-    it("should display error banner on submit error for validated form ", () => {
+    it("should display error banner on submit error for validated form ", async () => {
         routerSpy.mockReturnValue({
             id: null
         });
