@@ -76,7 +76,6 @@ export const Home = () => {
         const empId = id;
         const body = JSON.stringify(formState);
 
-        console.info(`Submit Form => ${JSON.stringify(formState)}`);
         updateEmployee(isUpdate, empId, body);
     };
 
