@@ -9,8 +9,11 @@
     "start": "webpack serve --open --mode development",
     "start:live": "webpack serve --open --mode development --live-reload --hot",
     "start:docker":"docker run -p 3006:3006 ipreencekmr/emp-employee",
-    "test": "jest --no-cache --watchAll",
-    "publish":"docker push ipreencekmr/emp-employee"
+    "publish":"docker push ipreencekmr/emp-employee",
+    "test": "jest --no-cache",
+    "test:watch": "jest --no-cache --watchAll --detectOpenHandles",
+    "lint": "eslint \"src/**/*.{js,jsx}\"",
+    "lint:fix": "eslint \"src/**/*.{js,jsx}\" --fix"
   },
   "license": "MIT",
   "author": {
